@@ -5,14 +5,17 @@
 #include "PaketUtils.h"
 #include "Arduino.h"
 #include "ArduinoJson.h"
+#include "objects/Config.h"
 
 namespace paket {
     /**
-     * Return Hello Paket.
+     * Return Hello Paket (Device Name, IC Manufacturer, IC Hardware, Version).
      * @return
      */
     String PaketUtils::hello() {
-        return generate("hello", "'version':'1.0.10','device':'byteusb','hardware':'pico'");
+        return generate("hello",
+                        "'version':'1.0.10','device':'byteusb','manufacturer':'" + String(CHIP_MANUFACTURER) +
+                        "','hardware':'" + CHIP_NAME + "', 'version':'" + BYTEUSB_VERSION + "'");
     }
 
     /**
@@ -20,21 +23,32 @@ namespace paket {
      * @return
      */
     String PaketUtils::list(objects::File filesIO[]) {
+        // Initialize new Document.
+        DynamicJsonDocument documentIO(1024);
+
         // Create new JSON Array.
-        JsonArray arrayIO;
+        JsonArray arrayIO = documentIO.to<JsonArray>();
 
-        // Loop trough File Array.
-        for (objects::File fileIO: filesIO) {
-            // Create new File JSON Object.
-            JsonObject objectIO;
+        // Calculate Size of Data.
+        int sizeIO = sizeof(filesIO);
 
-            // Add File Information.
-            objectIO["name"] = fileIO.getName();
-            objectIO["size"] = fileIO.getSize();
-            objectIO["edited"] = fileIO.getEdited();
+        // Check if Size is not null.
+        if (sizeIO > 0) {
+            // Loop trough File Array.
+            for (int countIO = 0; countIO < sizeIO; countIO++) {
 
-            // Put Object into Array.
-            arrayIO.add(objectIO);
+                // Get File Object from Array.
+                objects::File fileIO = filesIO[countIO];
+
+                // Create new Nested Object.
+                JsonObject objectIO = arrayIO.createNestedObject();
+
+                // Add File Information.
+                objectIO["name"] = fileIO.getName();
+                objectIO["size"] = fileIO.getSize();
+                objectIO["edited"] = fileIO.getEdited();
+            }
+
         }
 
         // Create new String Buffer.
@@ -44,7 +58,7 @@ namespace paket {
         serializeJson(arrayIO, bufferIO);
 
         // Generate List Paket.
-        return generate("list", bufferIO);
+        return generate("list", "'files':" + bufferIO);
     }
 
     /**
@@ -62,13 +76,19 @@ namespace paket {
      * @param dataIO
      */
     void PaketUtils::write(arduino::String dataIO) {
-        // Create new Char Buffer for Data.
-        char bufferIO[dataIO.length()];
+        // Calculate Size of Data.
+        int sizeIO = (int) dataIO.length();
 
-        // Write String into Char Array.
-        dataIO.toCharArray(bufferIO, dataIO.length());
+        // Check if Size is not null.
+        if (sizeIO > 0) {
+            // Create new Char Buffer for Data.
+            char bufferIO[sizeIO];
 
-        // Write to Baud.
-        Serial.write(bufferIO);
+            // Write String into Char Array.
+            dataIO.toCharArray(bufferIO, dataIO.length());
+
+            // Write to Baud.
+            Serial.println(bufferIO);
+        }
     }
 }

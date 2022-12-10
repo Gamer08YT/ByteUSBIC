@@ -13,7 +13,7 @@ namespace objects {
         return sizeIO;
     }
 
-    String File::getEdited()  {
+    String File::getEdited() {
         return editedIO;
     }
 } // objects

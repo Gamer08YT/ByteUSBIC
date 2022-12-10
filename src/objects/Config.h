@@ -5,35 +5,16 @@
 #ifndef BYTEUSBIC_CONFIG_H
 #define BYTEUSBIC_CONFIG_H
 
-#include "api/String.h"
 
-namespace objects {
+// Define Hardware.
+#define CHIP_NAME "pico"
+#define CHIP_MANUFACTURER "raspberry"
 
-    class Config {
-    public:
-        static int getBaud();
+// Define Baud.
+#define BAUD_RATE 115200
 
-        static const String &getManufacturer();
+// Define Software Version.
+#define BYTEUSB_VERSION  "1.10.0"
 
-        static const String &getChip();
-
-        static const String &getVersion();
-
-        virtual ~Config();
-
-    public:
-        // Store UART Baud Rate.
-        static int baudIO;
-
-        // Store Manufacturer of Chip.
-        static String manufacturerIO;
-
-        // Store Chip Name.
-        static String chipIO;
-
-        // Store Version of ByteUSBIC.
-        static String versionIO;
-    };
-};
 
 #endif //BYTEUSBIC_CONFIG_H

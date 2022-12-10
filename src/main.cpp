@@ -6,7 +6,7 @@
 #include <Arduino.h>
 
 // Include Config Class.
-#include "objects/Config.h";
+#include <objects/Config.h>
 
 // Include Paket Utils for parsing and compiling Pakets.
 #include <paket/PaketUtils.h>
@@ -19,7 +19,7 @@ int byteIO = 0;
  */
 void setup() {
     // Setup Baud Stream.
-    Serial.begin(objects::Config::getBaud());
+    Serial.begin(BAUD_RATE);
 }
 
 /**
@@ -35,6 +35,10 @@ void loop() {
     // Send Hello Command.
     paket::PaketUtils::write(paket::PaketUtils::hello());
 
+    objects::File filesIO[] = {*new objects::File("test.txt", 1, "10.12.2022"), *new objects::File("discord.txt", 100, "09.12.2022")};
+
+    paket::PaketUtils::write(paket::PaketUtils::list(filesIO));
+
     // Wait for 200 milliseconds (!! save Thread usage !!).
-    delay(200);
+    delay(1000);
 }
