@@ -6,8 +6,14 @@
 #define BYTEUSBIC_FILE_H
 
 #include "api/String.h"
+#include "File.h"
+
 
 namespace objects {
+
+    enum FileType {
+        FILE, DIR
+    };
 
     class File {
     private:
@@ -20,11 +26,15 @@ namespace objects {
         // Store last Edit Date of File.
         String editedIO;
 
+        // Store Type of File.
+        FileType typeIO;
+
     public:
-        File(String nameIO, int sizeIO, String editedIO) {
+        File(String nameIO, int sizeIO, String editedIO, FileType typeIO) {
             this->nameIO = nameIO;
             this->sizeIO = sizeIO;
             this->editedIO = editedIO;
+            this->typeIO = typeIO;
         }
 
         String getName();
@@ -32,6 +42,8 @@ namespace objects {
         int getSize();
 
         String getEdited();
+
+        String getType();
     };
 
 } // objects

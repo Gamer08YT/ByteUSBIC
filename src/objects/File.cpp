@@ -16,4 +16,8 @@ namespace objects {
     String File::getEdited() {
         return editedIO;
     }
+
+    String File::getType() {
+        return String(typeIO);
+    }
 } // objects

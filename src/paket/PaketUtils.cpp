@@ -14,7 +14,9 @@ namespace paket {
      */
     String PaketUtils::hello() {
         return generate("hello",
-                        "'version':'1.0.10','device':'byteusb','manufacturer':'" + String(CHIP_MANUFACTURER) +
+                        "'version':'" + String(BYTEUSB_VERSION) + "','buffer':'" + BYTEUSB_BUFFER +
+                        "','device':'byteusb','manufacturer':'" +
+                        String(CHIP_MANUFACTURER) +
                         "','hardware':'" + CHIP_NAME + "', 'version':'" + BYTEUSB_VERSION + "'");
     }
 
@@ -22,33 +24,32 @@ namespace paket {
      * Return List Paket.
      * @return
      */
-    String PaketUtils::list(objects::File filesIO[]) {
+    String PaketUtils::list(std::vector<objects::File> filesIO) {
         // Initialize new Document.
-        DynamicJsonDocument documentIO(1024);
+        DynamicJsonDocument documentIO(BYTEUSB_BUFFER);
 
         // Create new JSON Array.
         JsonArray arrayIO = documentIO.to<JsonArray>();
 
-        // Calculate Size of Data.
-        int sizeIO = sizeof(filesIO);
-
         // Check if Size is not null.
-        if (sizeIO > 0) {
-            // Loop trough File Array.
-            for (int countIO = 0; countIO < sizeIO; countIO++) {
+        // Loop trough File Array.
+        for (auto fileIO: filesIO) {
+            // Create new Nested Object.
+            JsonObject objectIO = arrayIO.createNestedObject();
 
-                // Get File Object from Array.
-                objects::File fileIO = filesIO[countIO];
+            // Add File Information.
+            objectIO["name"] = fileIO.getName();
 
-                // Create new Nested Object.
-                JsonObject objectIO = arrayIO.createNestedObject();
-
-                // Add File Information.
-                objectIO["name"] = fileIO.getName();
+            // Add Size only for Files.
+            if (fileIO.getType() != "1") {
                 objectIO["size"] = fileIO.getSize();
-                objectIO["edited"] = fileIO.getEdited();
             }
 
+            // Set last Edit Date.
+            objectIO["edited"] = fileIO.getEdited();
+
+            // Set Type of Directory / File.
+            objectIO["type"] = fileIO.getType();
         }
 
         // Create new String Buffer.
@@ -77,18 +78,24 @@ namespace paket {
      */
     void PaketUtils::write(arduino::String dataIO) {
         // Calculate Size of Data.
-        int sizeIO = (int) dataIO.length();
+        int sizeIO = (int) dataIO.length() + 1;
 
         // Check if Size is not null.
         if (sizeIO > 0) {
+            // Enable Builtin LED.
+            digitalWrite(LED_BUILTIN, HIGH);
+
             // Create new Char Buffer for Data.
             char bufferIO[sizeIO];
 
             // Write String into Char Array.
-            dataIO.toCharArray(bufferIO, dataIO.length());
+            dataIO.toCharArray(bufferIO, sizeIO);
 
             // Write to Baud.
             Serial.println(bufferIO);
+
+            // Disable Builtin LED.
+            digitalWrite(LED_BUILTIN, LOW);
         }
     }
 }

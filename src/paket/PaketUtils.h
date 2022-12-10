@@ -7,6 +7,7 @@
 
 #include <api/String.h>
 #include <objects/File.h>
+#include <vector>
 
 namespace paket {
     class PaketUtils {
@@ -15,7 +16,7 @@ namespace paket {
         static arduino::String hello();
 
         // Generate List Command.
-        static arduino::String list(objects::File filesIO[]);
+        static arduino::String list(std::vector<objects::File> filesIO);
 
         // Generate JSON Command.
         static arduino::String generate(arduino::String channelIO, arduino::String dataIO);
