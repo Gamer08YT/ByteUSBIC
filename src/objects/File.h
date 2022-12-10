@@ -5,31 +5,33 @@
 #ifndef BYTEUSBIC_FILE_H
 #define BYTEUSBIC_FILE_H
 
+#include "api/String.h"
+
 namespace objects {
 
     class File {
     private:
         // Store Name of File.
-        char *nameIO;
+        String nameIO;
 
         // Store Size of File.
         int sizeIO;
 
         // Store last Edit Date of File.
-        char *editedIO;
+        String editedIO;
 
     public:
-        File(char *nameIO, int sizeIO, char *editedIO) {
+        File(String nameIO, int sizeIO, String editedIO) {
             this->nameIO = nameIO;
             this->sizeIO = sizeIO;
             this->editedIO = editedIO;
         }
 
-        char *getName() const;
+        String getName();
 
-        int getSize() const;
+        int getSize();
 
-        char *getEdited() const;
+        String getEdited();
     };
 
 } // objects

@@ -5,15 +5,15 @@
 #include "File.h"
 
 namespace objects {
-    char *File::getName() const {
+    String File::getName() {
         return nameIO;
     }
 
-    int File::getSize() const {
+    int File::getSize() {
         return sizeIO;
     }
 
-    char *File::getEdited() const {
+    String File::getEdited()  {
         return editedIO;
     }
 } // objects

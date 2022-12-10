@@ -4,6 +4,7 @@
 
 #include "PaketUtils.h"
 #include "Arduino.h"
+#include "ArduinoJson.h"
 
 namespace paket {
     /**
@@ -19,7 +20,31 @@ namespace paket {
      * @return
      */
     String PaketUtils::list(objects::File filesIO[]) {
-        return generate("list", "");
+        // Create new JSON Array.
+        JsonArray arrayIO;
+
+        // Loop trough File Array.
+        for (objects::File fileIO: filesIO) {
+            // Create new File JSON Object.
+            JsonObject objectIO;
+
+            // Add File Information.
+            objectIO["name"] = fileIO.getName();
+            objectIO["size"] = fileIO.getSize();
+            objectIO["edited"] = fileIO.getEdited();
+
+            // Put Object into Array.
+            arrayIO.add(objectIO);
+        }
+
+        // Create new String Buffer.
+        String bufferIO;
+
+        // Serialize JSON Array.
+        serializeJson(arrayIO, bufferIO);
+
+        // Generate List Paket.
+        return generate("list", bufferIO);
     }
 
     /**
